@@ -37,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
     int count;
     boolean databaseRead;
 
-    ArrayList studentID,firstName,lastName,gender,dept;
+    ArrayList studentID, firstName, lastName, gender, dept;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,89 +49,87 @@ public class MainActivity extends AppCompatActivity {
         read = (Button) findViewById(R.id.read_data_button);
         write = (Button) findViewById(R.id.Write_data_button);
         database_checkbox = (CheckBox) findViewById(R.id.checkBox);
-        toast = Toast.makeText(this,"There is no data to read",duration);
-        intent = new Intent(this,SecondActivity.class);
+        toast = Toast.makeText(this, "There is no data to read", duration);
+        intent = new Intent(this, SecondActivity.class);
         count = 0;
         databaseRead = false;
 
+        root.setValue("Hello World");
 
-       database_checkbox.setOnClickListener(new View.OnClickListener(){
-           @Override
-           public void onClick(View v) {
-               databaseRead = true;
-           }
+        database_checkbox.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                databaseRead = true;
+            }
+        });
 
-       });
+        read.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
 
-       read.setOnClickListener(new View.OnClickListener(){
-           @Override
-           public void onClick(View view){
-
-               if(!database_checkbox.isActivated()){ //write to file
-                   String filename = "output.txt";
-                   ArrayList<String> user_data = new ArrayList<>();
-                   FileInputStream fileInputStream;
-                   InputStreamReader inputStreamReader;
-
-                   try{
-                       fileInputStream = openFileInput(filename);
-                       inputStreamReader = new InputStreamReader(fileInputStream);
-                       BufferedReader br = new BufferedReader(inputStreamReader);
-
-                       if(br.readLine()==null) {
+                if (!database_checkbox.isActivated()) { //read from file
+                    String filename = "data.txt";
+                    ArrayList<String> user_data = new ArrayList<>();
+                    FileInputStream fileInputStream;
+                    InputStreamReader inputStreamReader;
+                    try {
+                        fileInputStream = openFileInput(filename);
+                        inputStreamReader = new InputStreamReader(fileInputStream);
+                        BufferedReader br = new BufferedReader(inputStreamReader);
+                        if (br.readLine().equals(null)) {
                            toast.show();
-                       }else {
-                           while (br.readLine() != null) {
-                               count++;
-                               user_data.add("\t" + br.readLine() + "\n");
-                               intent.putExtra(String.valueOf(count),user_data.get(count));
-                           }
-                       }
-                   }catch (IOException e){
-                   e.printStackTrace();
-                   }
+                        } else {
+                            while (br.readLine() != null) {
+                                count++;
+                                user_data.add("\t" + br.readLine() + "\n");
+                                intent.putExtra(String.valueOf(count), user_data.get(count));
+                            }
+                            startActivity(intent);
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
 
-               }else{ //read from database
-                    OnCompleteListener<DataSnapshot> onFetchedValues = new OnCompleteListener<DataSnapshot>(){
-                       @Override
-                       public void onComplete(@NonNull Task<DataSnapshot> task){
-                           if(task.isSuccessful()){
-                               DataSnapshot user_data = task.getResult();
-                               for(DataSnapshot node : user_data.getChildren()) {
+                } else { //read from database
+                    OnCompleteListener<DataSnapshot> onFetchedValues = new OnCompleteListener<DataSnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<DataSnapshot> task) {
+                            if (task.isSuccessful()) {
+                                DataSnapshot user_data = task.getResult();
+                                for (DataSnapshot node : user_data.getChildren()) {
                                     studentID.add(node.getKey());
                                     firstName.add(node.child("firstName").getValue().toString());
                                     lastName.add(node.child("lastName").getValue().toString());
                                     gender.add(node.child("gender").getValue().toString());
                                     dept.add(node.child("Division").getValue().toString());
-                               }
-                           }else{
-                               toast.show();
-                               Log.e("firebase","error getting data",task.getException());
+                                }
+                            } else {
+                                Log.e("firebase", "error getting data", task.getException());
 
-                           }
-                       }
-                   };
+                            }
+                        }
+                    };
 
-               }
-           }
-       });
+                }
+            }
+        });
 
-       write.setOnClickListener(new OnClickListener() {
-           @Override
-           public void onClick(View v) {
-               if(!database_checkbox.isActivated()) { //go to next activty to write to file
-                    intent.putExtra("checkedDatabase",databaseRead);
-               }else{ //write to database
-                   intent.putExtra("checkedDatabase",databaseRead);
-               }
+        write.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!database_checkbox.isSelected()) { //go to next activty to write to file
+                    intent.putExtra("checkedDatabase", databaseRead);
+                } else { //write to database
+                    intent.putExtra("checkedDatabase", databaseRead);
+                }
+                startActivity(intent);
 
-               startActivity(intent);
-
-           }
-       });
-
+            }
+        });
 
     }
+
+}
 
 //    public void acessDatabase(View view) {
 //
@@ -170,4 +168,3 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-        }

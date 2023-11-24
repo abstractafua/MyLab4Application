@@ -1,3 +1,14 @@
 <resources>
     <string name="app_name">MyLab4Application</string>
+
+
+    <string-array name="div_array">
+
+        <item>COSC</item>
+
+        <item>DATA</item>
+
+        <item>MATH</item>
+
+    </string-array>
 </resources>
