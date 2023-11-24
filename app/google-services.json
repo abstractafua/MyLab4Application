@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "644485100257",
+    "project_id": "mylab4application",
+    "storage_bucket": "mylab4application.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:644485100257:android:339bdd3fbf922c69ef7da0",
+        "android_client_info": {
+          "package_name": "com.example.mylab4application"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB3EFDHU7y36d94SFJhoSrRARdXTb7D43E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
