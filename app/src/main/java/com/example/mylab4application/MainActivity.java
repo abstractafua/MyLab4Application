@@ -33,10 +33,9 @@ public class MainActivity extends AppCompatActivity {
     CheckBox database_checkbox;
     Toast toast;
     int duration = Toast.LENGTH_SHORT;
-    Intent intent;
+    Intent intent1, intent2;
     int count;
-    boolean databaseRead;
-
+    boolean databaseRead, userRead, userWrite;
     ArrayList studentID, firstName, lastName, gender, dept;
 
     @Override
@@ -50,9 +49,10 @@ public class MainActivity extends AppCompatActivity {
         write = (Button) findViewById(R.id.Write_data_button);
         database_checkbox = (CheckBox) findViewById(R.id.checkBox);
         toast = Toast.makeText(this, "There is no data to read", duration);
-        intent = new Intent(this, SecondActivity.class);
+        intent1 = new Intent(this, SecondActivity.class);
+        intent2 =  new Intent(this, FinalActivity.class);
         count = 0;
-        databaseRead = false;
+        databaseRead = false; userRead = false; userWrite = false;
 
         root.setValue("Hello World");
 
@@ -67,6 +67,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
+                    intent2.putExtra("checkedDatabase", databaseRead);
+                    startActivity(intent2);
+                }
                 if (!database_checkbox.isActivated()) { //read from file
                     String filename = "data.txt";
                     ArrayList<String> user_data = new ArrayList<>();
@@ -82,15 +85,17 @@ public class MainActivity extends AppCompatActivity {
                             while (br.readLine() != null) {
                                 count++;
                                 user_data.add("\t" + br.readLine() + "\n");
-                                intent.putExtra(String.valueOf(count), user_data.get(count));
+                                intent1.putExtra(String.valueOf(count), user_data.get(count));
                             }
-                            startActivity(intent);
+                            startActivity(intent2); //start reading activity
                         }
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
 
                 } else { //read from database
+
+
                     OnCompleteListener<DataSnapshot> onFetchedValues = new OnCompleteListener<DataSnapshot>() {
                         @Override
                         public void onComplete(@NonNull Task<DataSnapshot> task) {
@@ -103,6 +108,7 @@ public class MainActivity extends AppCompatActivity {
                                     gender.add(node.child("gender").getValue().toString());
                                     dept.add(node.child("Division").getValue().toString());
                                 }
+                                startActivity(intent2);
                             } else {
                                 Log.e("firebase", "error getting data", task.getException());
 
@@ -117,12 +123,16 @@ public class MainActivity extends AppCompatActivity {
         write.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
+                userWrite = true;
+                intent1.putExtra("write", userWrite);
+
                 if (!database_checkbox.isSelected()) { //go to next activty to write to file
-                    intent.putExtra("checkedDatabase", databaseRead);
+                    intent1.putExtra("checkedDatabase", databaseRead);
                 } else { //write to database
-                    intent.putExtra("checkedDatabase", databaseRead);
+                    intent1.putExtra("checkedDatabase", databaseRead);
                 }
-                startActivity(intent);
+
+                startActivity(intent1);
 
             }
         });

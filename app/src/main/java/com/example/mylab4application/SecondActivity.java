@@ -19,7 +19,7 @@ import org.w3c.dom.Text;
 
 import java.io.FileOutputStream;
 
-public class SecondActivity extends MainActivity {
+public class SecondActivity extends AppCompatActivity {
     private DatabaseReference root;
     TextView studentID,firstName,lastName;
     Intent intent;
@@ -29,7 +29,9 @@ public class SecondActivity extends MainActivity {
     Button submit;
     Toast toast;
     Bundle extra;
+    String sex;
     int duration = Toast.LENGTH_SHORT;
+    boolean databaseRead;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,13 +43,14 @@ public class SecondActivity extends MainActivity {
         firstName = (TextView) findViewById(R.id.firstName_editText);
         lastName = (TextView) findViewById(R.id.lastName_editText);
         gender = (RadioGroup) findViewById(R.id.gender_group);
-       female = (RadioButton) findViewById(R.id.female_button);
+        female = (RadioButton) findViewById(R.id.female_button);
         male = (RadioButton) findViewById(R.id.male_button);
         other = (RadioButton) findViewById(R.id.other_button);
         submit = (Button) findViewById(R.id.SUBMIT);
         toast = Toast.makeText(this, "Please provide correct information", duration);
         div = (Spinner) findViewById(R.id.division_spinner);
         databaseRead = extra.getBoolean("checkedDatabase");
+        sex = "UNDISCLOSED";
         root = FirebaseDatabase.getInstance().getReference();
 
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.div_array, android.R.layout.simple_spinner_item);
@@ -60,20 +63,20 @@ public class SecondActivity extends MainActivity {
                 String Id = studentID.getText().toString();
                 String first = firstName.getText().toString();
                 String last = lastName.getText().toString();
-                String gender = "UNDISCLOSED";
                 String division = div.getSelectedItem().toString();
 
                 if(studentID.length()!=8 | firstName.getText().length()==0 | lastName.getText().length()==0) {
                     toast.show();
                 }else{
-                    if(databaseRead){ //write to database
-//                        void writingButtonPressed(){
-//                            DatabaseReference current_user = root.child(studentID.getText().toString());
-//                            current_user.child("FirstName").setValue(firstName.getText().toString());
-//                            current_user.child("LastName").setValue(lastName.getText().toString());
-//                        }
+                    if(databaseRead) {//write to database
 
-                    }else{ //write to file
+                        DatabaseReference current_user = root.child(studentID.getText().toString());
+                        current_user.child("FirstName").setValue(firstName.getText().toString());
+                        current_user.child("LastName").setValue(lastName.getText().toString());
+                        current_user.child("Gender").setValue(sex);
+                        current_user.child("Division").setValue(lastName.getText().toString());
+
+                    }else{//write to file
                         FileOutputStream outputStream;
                         String filename = "data.txt";
                         String fileContents = "\n" + Id + " " + first + " " + last + " " + gender + " " + division;
@@ -88,6 +91,15 @@ public class SecondActivity extends MainActivity {
                         finish();
                     }
                 }
+            }
+
+        });
+
+        gender.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                 sex = findViewById(gender.getCheckedRadioButtonId()).toString();
+
             }
         });
 
